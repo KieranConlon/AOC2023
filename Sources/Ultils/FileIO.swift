@@ -50,6 +50,7 @@ enum SeparatorToken: String {
   case tab = "\t"
   case pipe = "|"
   case commaSpace = ", "
+  case semicolonSpace = "; "
 }
 
 func rawDataAsArray<T>(_ raw: String, delim: SeparatorToken, convert: (String) -> T?) -> [T] {
