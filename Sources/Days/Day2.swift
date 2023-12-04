@@ -29,7 +29,7 @@ final class Day2: Day {
       cubeGuessingCompetition.totalCubes = [.red: 12, .green: 13, .blue: 14]
       cubeGuessingCompetition.cubeGuessingGame = rawDataAsArray(useExampleData ? exampleData : input, delim: .newline) { CubeGuessingGame($0) }
 
-      let sumGameIDs = cubeGuessingCompetition.validGameIDs().reduce(0) { $0 + $1 }
+      let sumGameIDs = cubeGuessingCompetition.validGameIDs().reduce(0, +)
       return "\(sumGameIDs)"
     }
   }
