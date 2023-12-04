@@ -32,7 +32,11 @@ final class Day3: Day {
       """
     ) {
       engineSchematic = EngineSchematic(useExampleData ? exampleData : input)
+      
+      // pre-scan the schematic to find all the possible symbols
       engineSchematic.scanPartSymbols()
+      
+      // scan the schematic to find all the part numbers and check if they are adjacent to a symbol
       engineSchematic.updateComponentList()
       
       // Our list of part numbers that are adjacent to a symbol will have partType = .real
@@ -56,6 +60,7 @@ final class Day3: Day {
       What is the sum of all of the gear ratios in your engine schematic?
       """
     ) {
+      // By adding a `gears` dictionary to `engineSchematic` we can track how many gears are linked to parts.
       // Add up the gear.gearRatio values.
       //  Any gear that has only 0 or 1 linked part will return a gearRatio of 0 so adding all gearRatios is safe.
       var sumGearRatios = 0
@@ -178,6 +183,7 @@ struct EngineSchematic {
     // Initially assume every part is a .pseudo part
     // if any of the search cells contain a symbol, then set the part's type to .real
     //
+    // Updated for Pt2.
     // When checking the search cells, if the cell contain a gear "*", add the current
     //   part number to array for the gear at this location.
     var type: PartType = .pseudo
