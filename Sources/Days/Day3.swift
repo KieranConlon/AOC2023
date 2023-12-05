@@ -40,9 +40,8 @@ final class Day3: Day {
       engineSchematic.updateComponentList()
       
       // Our list of part numbers that are adjacent to a symbol will have partType = .real
-      var sumPartNums = 0
-      for component in engineSchematic.components {
-        if component.partType == .real { sumPartNums += component.partNumber}
+      let sumPartNums = engineSchematic.components.reduce(0) { sum, component in
+        component.partType == .real ? sum + component.partNumber : sum
       }
       
       return "\(sumPartNums)"
@@ -62,11 +61,11 @@ final class Day3: Day {
     ) {
       // By adding a `gears` dictionary to `engineSchematic` we can track how many gears are linked to parts.
       // Add up the gear.gearRatio values.
-      //  Any gear that has only 0 or 1 linked part will return a gearRatio of 0 so adding all gearRatios is safe.
-      var sumGearRatios = 0
-      for (_, gear) in engineSchematic.gears {
-        sumGearRatios += gear.gearRatio
+      //  Any gear that has only 0 or 1 linked part will return a gearRatio of 0 so adding all gearRatios is safe.      
+      let sumGearRatios = engineSchematic.gears.reduce(0) { result, gear in
+        result + gear.value.gearRatio
       }
+      
       return "\(sumGearRatios)"
     }
   }
@@ -143,8 +142,9 @@ struct EngineSchematic {
         let matchRange = match.range
         if matchRange.location != NSNotFound {
           let partNum = Int((line as NSString).substring(with: matchRange))!
-          var component = EngineComponent(partNumber: partNum, partType: .unknown, location: (x: matchRange.lowerBound, y: y,
-                                                                                      dx: matchRange.length))
+          var component = EngineComponent(partNumber: partNum, partType: .unknown, 
+                                          location: (x: matchRange.lowerBound, y: y,
+                                                     dx: matchRange.length))
           let type = determineComponentType(component)
           component.partType = type
           self.components.append(component)
@@ -184,8 +184,9 @@ struct EngineSchematic {
     // if any of the search cells contain a symbol, then set the part's type to .real
     //
     // Updated for Pt2.
-    // When checking the search cells, if the cell contain a gear "*", add the current
-    //   part number to array for the gear at this location.
+    // When checking the search cells, if the cell contain a gear "*" ...
+    //   - create a gear in this location if not already exists
+    //   - add the current part number to this gear's `linkedPartNums` array.
     var type: PartType = .pseudo
     for cell in searchCells {
       let line = diagram[cell.y]
@@ -193,6 +194,7 @@ struct EngineSchematic {
       if partSymbols.contains(c) {
         type = .real
         
+        // this aded for pt2
         if c == "*" {
           let locn = GearLocation(x: cell.x, y: cell.y)
                    
@@ -201,6 +203,8 @@ struct EngineSchematic {
           }
           gears[locn]!.linkedPartNums.append(component.partNumber)
         }
+        
+        
       }
     }
     return type
