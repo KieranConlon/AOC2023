@@ -49,6 +49,7 @@ enum SeparatorToken: String {
   case comma = ","
   case tab = "\t"
   case pipe = "|"
+  case colon = ":"
   case commaSpace = ", "
   case semicolonSpace = "; "
 }

@@ -103,9 +103,7 @@ struct Gear {
 
 struct EngineSchematic {
   var diagram: [String]
-  var schematicDimensions: (width: Int, height: Int) {
-    !diagram.isEmpty ? (width: diagram[0].count, height: diagram.count) : (width: 0, height: 0)
-  }
+  var schematicDimensions: (width: Int, height: Int) { !diagram.isEmpty ? (width: diagram[0].count, height: diagram.count) : (width: 0, height: 0) }
   var components = [EngineComponent]()
   var partSymbols = Set<Character>()
   var gears = [GearLocation: Gear]()
