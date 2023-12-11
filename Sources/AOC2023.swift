@@ -28,7 +28,7 @@ struct AOC2023: AsyncParsableCommand {
           help: "Override the default AOC input/output file extension.")
   var fileExtension: String = ".txt"
   
-  @Option(name: [.customShort("x"), .customLong("example-data")],
+  @Flag(name: [.customShort("x"), .customLong("example-data")],
           help: "Use hard-coded example data instead of the input file.")
   var useExampleData: Bool = false
   
