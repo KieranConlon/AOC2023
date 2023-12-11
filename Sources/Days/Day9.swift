@@ -6,7 +6,7 @@
 import Foundation
 
 final class Day9: Day {
-  let dayNum = 0
+  var oasisData = OasisDataLogger("")
   let exampleData = """
       0 3 6 9 12 15
       1 3 6 10 15 21
@@ -20,8 +20,7 @@ final class Day9: Day {
       What is the sum of these extrapolated values?
       """
     ) {
-      let oasisData = OasisDataLogger(useExampleData ? exampleData : input)
-      
+      oasisData = OasisDataLogger(useExampleData ? exampleData : input)
       return "\(oasisData.nextElement)"
     }
   }
@@ -33,8 +32,6 @@ final class Day9: Day {
       What is the sum of these extrapolated values?
       """
     ) {
-      let oasisData = OasisDataLogger(useExampleData ? exampleData : input)
-      
       return "\(oasisData.prevElement)"
     }
   }
@@ -46,17 +43,16 @@ struct OasisDataLogger {
   var data: [DifferenceArray]
   var nextElement: Int {
     var val = 0
-    for i in 0..<topLevelData.count {
-      val += topLevelData[i].last! + data[i].nextElement
+    for (i, array) in topLevelData.enumerated() {
+      val += (array.last ?? 0) + data[i].nextElement
     }
     return val
   }
   var prevElement: Int {
     var val = 0
-    for i in 0..<topLevelData.count {
-      let tmp = topLevelData[i].first! - data[i].prevElement
-      //print(tmp)
-      val += tmp
+    
+    for (i, array) in topLevelData.enumerated() {
+      val += (array.first ?? 0) - data[i].prevElement
     }
     return val
   }
@@ -74,35 +70,23 @@ struct OasisDataLogger {
 }
 
 class DifferenceArray {
-  var data: [Int]
-  var diffs: DifferenceArray?
-  var nextElement: Int {
-    if isFinalDiff { return 0
-    } else {
-      guard let v1 = data.last,
-            let v2 = diffs?.nextElement else { return 0 }
-      return v1 + v2
+    var data: [Int]
+    var diffs: DifferenceArray?
+    var nextElement: Int {
+        guard !isFinalDiff, let v1 = data.last else { return 0 }
+        return v1 + (diffs?.nextElement ?? 0)
     }
-  }
-  var prevElement: Int {
-    if isFinalDiff { return 0
-    } else {
-      guard let v1 = data.first,
-            let v2 = diffs?.prevElement else { return 0 }
-      return v1 - v2
+    var prevElement: Int {
+        guard !isFinalDiff, let v1 = data.first else { return 0 }
+        return v1 - (diffs?.prevElement ?? 0)
     }
-  }
-  var isFinalDiff: Bool
-  
-  init(_ parentData: [Int]) {
-    var _diffData = [Int]()
-    zip(parentData, parentData.dropFirst()).forEach { (current, next) in
-      _diffData.append(next - current)
+    var isFinalDiff: Bool
+
+    init(_ parentData: [Int]) {
+        self.data = zip(parentData, parentData.dropFirst()).map { $1 - $0 }
+        self.isFinalDiff = (data.count == 1 || Set(data) == [0])
+        if !isFinalDiff {
+            diffs = DifferenceArray(self.data)
+        }
     }
-    self.data = _diffData
-    self.isFinalDiff = (_diffData.count == 1 || Set(_diffData) == [0])
-    if !isFinalDiff {
-      diffs = DifferenceArray(self.data)
-    }
-  }
 }
